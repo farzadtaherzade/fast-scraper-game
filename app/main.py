@@ -14,7 +14,9 @@ def on_startup():
 
 @app.get("/")
 def get_news(session: SessionDep) -> list[Article]:
-    statment = select(Article).limit(20)
+    count = len(session.exec(select(Article)).all())
+
+    statment = select(Article).offset(count - 20).limit(20)
     return session.exec(statment).all()
 
 @app.get("/refresh")

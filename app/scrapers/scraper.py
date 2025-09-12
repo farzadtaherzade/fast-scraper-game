@@ -36,6 +36,7 @@ def scrape_gamespot_rss():
 
 
     session.commit()
+    print("finished")
     return "finiseh"
 
 # scrape_gamespot_rss()
