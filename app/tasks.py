@@ -14,5 +14,4 @@ def cached_article_data():
    
     with Session(engine) as session:
         statment = select(Article).where(Article.created_at >= start_of_day, Article.created_at <= end_of_day)
-        session = Session()
         cache_articles(session.exec(statment).all())

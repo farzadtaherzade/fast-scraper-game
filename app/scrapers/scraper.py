@@ -25,37 +25,33 @@ def scrape_gamespot_rss():
     response = requests.get(GAMESPOT_RSS_URL, headers=headers, timeout=30)
 
     soup = BeautifulSoup(response.content, "xml")
+    with Session(engine) as session: 
 
-    for item in soup.find_all("item"):
-        title = item.title.text
-        format_string = "%a, %d %b %Y %H:%M:%S %z"
-        published_at = datetime.strptime(item.pubDate.text, format_string)
-        description = item.description.text
-        url = item.link.text
+        for item in soup.find_all("item"):
+            title = item.title.text
+            format_string = "%a, %d %b %Y %H:%M:%S %z"
+            published_at = datetime.strptime(item.pubDate.text, format_string)
+            description = item.description.text
+            url = item.link.text
 
-        # print(title[:10], url, published_at, url)
         
-        article = Article(title=title, published_date=published_at, description=description, url=url, source="GAMESPOT")
+            article = Article(title=title, published_date=published_at, description=description, url=url, source="GAMESPOT")
  
-        statment = select(Article).where(Article.title == title)
-        
-        with Session(engine) as session:
-    
+            statment = select(Article).where(Article.url == url)
+         
             if not session.exec(statment).first():
                 session.add(article)
                 message = (
                     f"🎮 *{title}*\n"
                     f"📅 Published on: {published_at}\n"
-                    f"🔗 Read more: {title}\n\n"
+                    f"🔗 Read more: {url}\n\n"
                     f"📝 *Description:*\n{description[:25]}\n"
                 )
 
                 q.enqueue(send_news_message,message, "Markdown")
 
-        
-
-    session.commit()
-    q.enqueue(cached_article_data)
+        q.enqueue(cached_article_data)
+        session.commit()
     print("finished")
     return "finiseh"
 
