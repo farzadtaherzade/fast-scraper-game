@@ -16,16 +16,21 @@ scheduler = Scheduler(connection=redis_conn)
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
-    q.enqueue(scrape_gamespot_rss)
     scheduler.schedule(
-            scheduled_time=datetime.now() + timedelta(hours=2),
-            func=cached_article_data
+            scheduled_time=datetime.utcnow() + timedelta(hours=2),
+            func=cached_article_data,
+            interval=7200,
+            repeat=None,
             )
 
     scheduler.schedule(
-            scheduled_time=datetime.now() + timedelta(hours=1),
-            func=scrape_gamespot_rss
+            scheduled_time=datetime.utcnow(),
+            func=scrape_gamespot_rss, 
+            interval=3600,
+            repeat=None,
             )
+    jobs = list(scheduler.get_jobs())
+    print(jobs)
 @app.get("/")
 def get_news(session: SessionDep) -> list[Article]:
     count = len(session.exec(select(Article)).all())
