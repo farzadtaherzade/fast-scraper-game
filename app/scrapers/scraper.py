@@ -27,9 +27,6 @@ headers = {
 
 q = Queue(connection=redis_conn)
 
-def print_hello_world():
-    print("hello world")
-
 def scrape_games_rss():
 
     for feed in feeds:
@@ -67,5 +64,3 @@ def scrape_games_rss():
     
     print("finished")
     return "finiseh"
-
-# scrape_gamespot_rss()
