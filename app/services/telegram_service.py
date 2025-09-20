@@ -20,5 +20,3 @@ def send_news_message(text: str, parse_mode):
             )
     print(res.status_code)
     return "message sended"
-
-    
