@@ -1,12 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from dateutil import parser
 from sqlmodel import select, Session
 from app.models import Article
 from app.database import engine, redis_conn
 from app.services.telegram_service import send_news_message 
 from app.tasks import cached_article_data
 from rq import Queue
+import pytz
 
 GAMESPOT_RSS_URL = "https://www.gamespot.com/feeds/mashup"
 
@@ -18,6 +19,18 @@ feeds = [
     {
         "source": "IGN",
         "url": "https://feeds.ign.com/ign/games-all",
+    },
+    {
+        "source": "DEV.to",
+        "url": "https://dev.to/feed"
+    },
+    {
+        "source": "GAME_INFORMER",
+        "url": "https://gameinformer.com/news.xml"
+    },
+    {
+        "source": "POLYGON",
+        "url": "https://polygon.com/rss/index.xml"
     }
 ]
 
@@ -36,11 +49,17 @@ def scrape_games_rss():
         with Session(engine) as session: 
             for item in soup.find_all("item"):
                 title = item.title.text # type: ignore
-                format_string = "%a, %d %b %Y %H:%M:%S %z"
-                published_at = datetime.strptime(item.pubDate.text, format_string) # type: ignore
                 description = item.description.text # type: ignore
                 url = item.link.text # type: ignore
 
+                date_str = item.pubDate.text  # e.g. "Tue, 23 Sep 2025 19:50:40 GMT"
+                published_at = parser.parse(date_str)  # this returns datetime
+
+                # Normalize to UTC
+                if published_at.tzinfo:
+                    published_at = published_at.astimezone(pytz.UTC)
+                else:
+                    published_at = published_at.replace(tzinfo=pytz.UTC)
             
                 article = Article(title=title, published_date=published_at, description=description, url=url, source=feed["source"])
     
@@ -50,7 +69,7 @@ def scrape_games_rss():
                     session.add(article)
                     message = (
                         f"🎮 *{article.title}*\n"
-                        f"🌐 Source: _{article.source}_\n"
+                        f"🌐 Source: _#{article.source}_\n"
                         f"📅 Published: {article.published_date.strftime('%Y-%m-%d %H:%M')}\n"
                         f"🔗 [Read more]({article.url})\n\n"
                         f"📝 *Summary:*\n{article.description[:501]}{'...' if len(article.description) > 500 else ''}"

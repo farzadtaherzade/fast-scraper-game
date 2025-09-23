@@ -1,5 +1,4 @@
 from fastapi import FastAPI, BackgroundTasks
-from sqlmodel import select
 from .database import create_db_and_tables, SessionDep, redis_conn
 from app.scrapers.scraper import scrape_games_rss 
 from .models import Article
