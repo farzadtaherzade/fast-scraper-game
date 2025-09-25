@@ -17,7 +17,7 @@ scheduler = Scheduler(connection=redis_conn)
 def on_startup():
     create_db_and_tables()
     scheduler.schedule(
-            scheduled_time=datetime.utcnow() + timedelta(hours=2),
+            scheduled_time=datetime.utcnow(),
             func=cached_article_data,
             interval=7200,
             repeat=None,

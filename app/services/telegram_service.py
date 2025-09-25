@@ -18,5 +18,4 @@ def send_news_message(text: str, parse_mode):
             url,
             json=payload
             )
-    print(res.status_code)
     return "message sended"
