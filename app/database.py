@@ -10,7 +10,7 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args)
 
-redis_conn = Redis(host="localhost", port=6379, db=0)
+redis_conn = Redis(host="redis", port=6379, db=0)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)

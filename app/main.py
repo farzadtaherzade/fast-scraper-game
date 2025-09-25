@@ -30,8 +30,8 @@ def on_startup():
             repeat=None,
             )
 @app.get("/")
-async def get_news(session: SessionDep) -> list[Article]:
-    return await get_cache_article()
+def get_news(session: SessionDep) -> list[Article]:
+    return get_cache_article()
 
 @app.get("/refresh")
 def refresh_news(background_tasks: BackgroundTasks) -> str:
