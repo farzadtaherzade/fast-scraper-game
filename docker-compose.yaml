@@ -11,7 +11,7 @@ services:
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=${REDIS_URL}
     dns:
       - 8.8.8.8
       - 1.1.1.1
@@ -22,13 +22,13 @@ services:
   worker:
     build: .
     container_name: worker
-    command: rq worker --url redis://redis:6379/0
+    command: rq worker --url ${REDIS_URL}
     depends_on:
       - redis
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
-      - REDIS_URL=redis://redis:6379/1
+      - RED IS_URL=${REDIS_URL}
     dns:
       - 8.8.8.8
       - 1.1.1.1
@@ -38,7 +38,7 @@ services:
   rqscheduler:
     build: .
     container_name: rqscheduler
-    command: rqscheduler --host redis --port 6379 --db 2
+    command: rqscheduler --url "redis://localhost:6379/0" --interval 60
     depends_on:
       - redis
     environment:
