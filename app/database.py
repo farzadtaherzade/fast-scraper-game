@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends 
 from redis import Redis
 from dotenv import load_dotenv
+import os
 
 load_dotenv(".env")
 
