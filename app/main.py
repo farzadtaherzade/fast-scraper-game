@@ -7,6 +7,7 @@ from rq_scheduler import Scheduler
 from datetime import timedelta, datetime
 from app.tasks import cached_article_data
 from app.services.redis_service import get_cache_article 
+from typing import Optional
 
 app = FastAPI()
 
@@ -30,7 +31,7 @@ def on_startup():
             repeat=None,
             )
 @app.get("/")
-def get_news(session: SessionDep) -> list[Article]:
+def get_news(session: SessionDep) -> Optional[list[Article]]:
     return get_cache_article()
 
 @app.get("/refresh")

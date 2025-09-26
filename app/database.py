@@ -14,8 +14,9 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args)
 
-redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-redis_conn = Redis.from_url(redis_url)
+redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
+print(redis_url, "l;kjasldkasdnas")
+redis_conn = Redis.from_url(redis_url, decode_responses=True)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
