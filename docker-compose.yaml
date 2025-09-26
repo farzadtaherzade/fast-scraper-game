@@ -15,6 +15,9 @@ services:
       - 8.8.8.8
       - 1.1.1.1
 
+    networks:
+      - appnet
+
   worker:
     build: .
     container_name: worker
@@ -48,3 +51,7 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
+
+networks:
+  appnet:
+    driver: bridge
