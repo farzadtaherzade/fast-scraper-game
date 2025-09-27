@@ -15,7 +15,6 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
-
     networks:
       - appnet
 
@@ -28,7 +27,7 @@ services:
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
-      - RED IS_URL=${REDIS_URL}
+      - REDIS_URL=${REDIS_URL}
     dns:
       - 8.8.8.8
       - 1.1.1.1
@@ -38,17 +37,19 @@ services:
   rqscheduler:
     build: .
     container_name: rqscheduler
-    command: rqscheduler --url "redis://localhost:6379/0" --interval 60
+    command: rqscheduler --url ${REDIS_URL} --interval 60
     depends_on:
       - redis
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
+      - REDIS_URL=${REDIS_URL}
     dns:
       - 8.8.8.8
       - 1.1.1.1
     networks:
       - appnet
+
   redis:
     image: redis
     container_name: redis
