@@ -12,11 +12,12 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
       - REDIS_URL=${REDIS_URL}
+      - HTTP_PROXY=http://host.docker.internal:7890
+      - HTTPS_PROXY=http://host.docker.internal:7890
+      - ALL_PROXY=socks5://host.docker.internal:1080
     dns:
       - 8.8.8.8
       - 1.1.1.1
-    networks:
-      - appnet
 
   worker:
     build: .
@@ -28,11 +29,12 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
       - REDIS_URL=${REDIS_URL}
+      - HTTP_PROXY=http://host.docker.internal:7890
+      - HTTPS_PROXY=http://host.docker.internal:7890
+      - ALL_PROXY=socks5://host.docker.internal:1080
     dns:
       - 8.8.8.8
       - 1.1.1.1
-    networks:
-      - appnet
 
   rqscheduler:
     build: .
@@ -44,11 +46,12 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
       - REDIS_URL=${REDIS_URL}
+      - HTTP_PROXY=http://host.docker.internal:7890
+      - HTTPS_PROXY=http://host.docker.internal:7890
+      - ALL_PROXY=socks5://host.docker.internal:1080
     dns:
       - 8.8.8.8
       - 1.1.1.1
-    networks:
-      - appnet
 
   redis:
     image: redis
@@ -56,9 +59,3 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
-    networks:
-      - appnet
-
-networks:
-  appnet:
-    driver: bridge
