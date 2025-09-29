@@ -17,19 +17,9 @@ scheduler = Scheduler(connection=redis_conn)
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
-    scheduler.schedule(
-            scheduled_time=datetime.utcnow(),
-            func=cached_article_data,
-            interval=7200,
-            repeat=None,
-            )
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(scrape_games_rss, task_name="Initial Rss Scrape")
 
-    scheduler.schedule(
-            scheduled_time=datetime.utcnow(),
-            func=scrape_games_rss, 
-            interval=3600,
-            repeat=None,
-            )
 @app.get("/")
 def get_news(session: SessionDep) -> Optional[list[Article]]:
     return get_cache_article()

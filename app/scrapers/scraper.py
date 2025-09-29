@@ -75,9 +75,9 @@ def scrape_games_rss():
                         f"📝 *Summary:*\n{article.description[:501]}{'...' if len(article.description) > 500 else ''}"
                     )
 
-                    q.enqueue(send_news_message,message, "Markdown")
+                    send_news_message(message,"Markdown")
 
-            q.enqueue(cached_article_data)
+            cached_article_data()
             session.commit()
 
     
