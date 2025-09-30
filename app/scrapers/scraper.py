@@ -21,17 +21,29 @@ feeds = [
         "url": "https://feeds.ign.com/ign/games-all",
     },
     {
-        "source": "DEV.to",
-        "url": "https://dev.to/feed"
-    },
-    {
         "source": "GAME_INFORMER",
-        "url": "https://gameinformer.com/news.xml"
+        "url": "https://gameinformer.com/news.xml",
     },
     {
         "source": "POLYGON",
-        "url": "https://polygon.com/rss/index.xml"
-    }
+        "url": "https://polygon.com/rss/index.xml",
+    },
+    {
+        "source": "DEV_PYTHON",
+        "url": "https://dev.to/feed/tag/python",
+    },
+    {
+        "source": "DEV_WEBDEV",
+        "url": "https://dev.to/feed/tag/webdev",
+    },
+    {
+        "source": "DEV_GAMEDEV",
+        "url": "https://dev.to/feed/tag/gamedev",
+    },
+    {
+        "source": "DEV_DATABASE",
+        "url": "https://dev.to/feed/tag/database",
+    },
 ]
 
 headers = {
