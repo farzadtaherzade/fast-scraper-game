@@ -41,19 +41,29 @@ headers = {
 q = Queue(connection=redis_conn)
 
 def scrape_games_rss():
-
+    new_count = 0
     for feed in feeds:
-        response = requests.get(feed["url"], headers=headers, timeout=30)
+        try:
+            response = requests.get(feed["url"], headers=headers, timeout=30)
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            print(f"[scraper] {feed['source']} unavailable: {exc}")
+            continue
 
         soup = BeautifulSoup(response.content, "xml")
-        with Session(engine) as session: 
+        with Session(engine) as session:
             for item in soup.find_all("item"):
-                title = item.title.text # type: ignore
-                description = item.description.text # type: ignore
-                url = item.link.text # type: ignore
-
-                date_str = item.pubDate.text  # e.g. "Tue, 23 Sep 2025 19:50:40 GMT"
-                published_at = parser.parse(date_str)  # this returns datetime
+                title_node = item.find("title")
+                url_node = item.find("link")
+                date_node = item.find("pubDate")
+                if not title_node or not url_node or not date_node:
+                    continue
+                title = title_node.get_text(strip=True)
+                description = item.find("description")
+                description_text = description.get_text(" ", strip=True) if description else ""
+                url = url_node.get_text(strip=True)
+                date_str = date_node.get_text(strip=True)
+                published_at = parser.parse(date_str)
 
                 # Normalize to UTC
                 if published_at.tzinfo:
@@ -61,7 +71,7 @@ def scrape_games_rss():
                 else:
                     published_at = published_at.replace(tzinfo=pytz.UTC)
             
-                article = Article(title=title, published_date=published_at, description=description, url=url, source=feed["source"])
+                article = Article(title=title, published_date=published_at, description=description_text, url=url, source=feed["source"])
     
                 statment = select(Article).where(Article.url == url)
             
